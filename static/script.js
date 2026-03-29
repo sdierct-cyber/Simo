@@ -2379,22 +2379,13 @@
           const action = btn.getAttribute("data-recent-action");
 
           if (action === "open") {
-  const modal = $("builderLibraryModal");
-  if (modal) {
-    modal.hidden = true;
-    modal.style.display = "none";
-    delete modal.dataset.modalVisible;
-  }
-
-  document.body.classList.remove("modal-open");
-
+  closeLibrary();
   setTimeout(() => {
     openPreviewModal(item.html || "", item.title || "Untitled Build");
-  }, 180);
-
+  }, 120);
   return;
 }
-          
+
           if (action === "copy-title") {
             await copyTextToClipboard(item.title || "Untitled Preview", "Preview title copied.");
             return;
@@ -2617,141 +2608,154 @@
   }
 
   function renderLibrary() {
-    const list = $("builderLibraryList");
-    if (!list) return;
+  const list = $("builderLibraryList");
+  if (!list) return;
 
-    const all = getLibrary();
-    renderStatsBar(all);
-    renderFilterChips();
-    updateDashboardUi();
+  const all = getLibrary();
+  renderStatsBar(all);
+  renderFilterChips();
+  updateDashboardUi();
 
-    const visible = filterLibrary(all);
+  const visible = filterLibrary(all);
 
-    if (!visible.length) {
-      list.innerHTML = `
-        <div style="
-          padding:18px;
-          border-radius:18px;
-          background:rgba(255,255,255,.04);
-          border:1px solid rgba(255,255,255,.08);
-          color:#dbe6ff;
+  if (!visible.length) {
+    list.innerHTML = `
+      <div style="
+        padding:18px;
+        border-radius:18px;
+        background:rgba(255,255,255,.04);
+        border:1px solid rgba(255,255,255,.08);
+        color:#dbe6ff;
+      ">
+        No builds found.
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = visible
+    .map((item) => {
+      const tagsHtml = (item.tags || [])
+        .map(
+          (tag) => `
+            <span style="
+              padding:5px 9px;
+              border-radius:999px;
+              background:rgba(97,140,255,.16);
+              border:1px solid rgba(97,140,255,.22);
+              color:#e8f0ff;
+              font-size:12px;
+            ">${escapeHtml(tag)}</span>
+          `
+        )
+        .join("");
+
+      return `
+        <div data-build-id="${escapeHtml(item.id)}" style="
+          padding:16px;
+          border-radius:20px;
+          background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.035));
+          border:1px solid rgba(255,255,255,.09);
+          color:#eef4ff;
+          box-shadow:0 12px 30px rgba(0,0,0,.18);
         ">
-          No builds found.
-        </div>
-      `;
-      return;
-    }
-
-    list.innerHTML = visible
-      .map((item) => {
-        const tagsHtml = (item.tags || [])
-          .map(
-            (tag) => `
-              <span style="
-                padding:5px 9px;
-                border-radius:999px;
-                background:rgba(97,140,255,.16);
-                border:1px solid rgba(97,140,255,.22);
-                color:#e8f0ff;
-                font-size:12px;
-              ">${escapeHtml(tag)}</span>
-            `
-          )
-          .join("");
-
-        return `
-          <div data-build-id="${escapeHtml(item.id)}" style="
-            padding:16px;
-            border-radius:20px;
-            background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.035));
-            border:1px solid rgba(255,255,255,.09);
-            color:#eef4ff;
-            box-shadow:0 12px 30px rgba(0,0,0,.18);
-          ">
-            <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;">
-              <div style="min-width:220px; flex:1;">
-                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                  <div style="font-size:16px; font-weight:700;">${escapeHtml(item.title || "Untitled Build")}</div>
-                  ${item.pinned ? badgeHtml("Pinned") : ""}
-                  ${item.archived ? badgeHtml("Archived") : ""}
-                </div>
-                <div style="font-size:12px; opacity:.8; margin-top:6px;">
-                  Updated ${escapeHtml(prettyDate(item.updatedAt || item.createdAt))}
-                </div>
-                ${
-                  item.notes
-                    ? `<div style="margin-top:10px; font-size:13px; color:#d8e3ff;">${escapeHtml(item.notes)}</div>`
-                    : ""
-                }
-                ${
-                  tagsHtml
-                    ? `<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">${tagsHtml}</div>`
-                    : ""
-                }
+          <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+            <div style="min-width:220px; flex:1;">
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <div style="font-size:16px; font-weight:700;">${escapeHtml(item.title || "Untitled Build")}</div>
+                ${item.pinned ? badgeHtml("Pinned") : ""}
+                ${item.archived ? badgeHtml("Archived") : ""}
               </div>
-
-              <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button type="button" data-action="open">Open</button>
-                <button type="button" data-action="pin">${item.pinned ? "Unpin" : "Pin"}</button>
-                <button type="button" data-action="notes">Notes</button>
-                <button type="button" data-action="tags">Tags</button>
-                <button type="button" data-action="rename">Rename</button>
-                <button type="button" data-action="duplicate">Duplicate</button>
-                <button type="button" data-action="archive">${item.archived ? "Unarchive" : "Archive"}</button>
-                <button type="button" data-action="delete">Delete</button>
+              <div style="font-size:12px; opacity:.8; margin-top:6px;">
+                Updated ${escapeHtml(prettyDate(item.updatedAt || item.createdAt))}
               </div>
+              ${
+                item.notes
+                  ? `<div style="margin-top:10px; font-size:13px; color:#d8e3ff;">${escapeHtml(item.notes)}</div>`
+                  : ""
+              }
+              ${
+                tagsHtml
+                  ? `<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">${tagsHtml}</div>`
+                  : ""
+              }
+            </div>
+
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" data-action="open">Open</button>
+              <button type="button" data-action="pin">${item.pinned ? "Unpin" : "Pin"}</button>
+              <button type="button" data-action="notes">Notes</button>
+              <button type="button" data-action="tags">Tags</button>
+              <button type="button" data-action="rename">Rename</button>
+              <button type="button" data-action="duplicate">Duplicate</button>
+              <button type="button" data-action="archive">${item.archived ? "Unarchive" : "Archive"}</button>
+              <button type="button" data-action="delete">Delete</button>
             </div>
           </div>
-        `;
-      })
-      .join("");
+        </div>
+      `;
+    })
+    .join("");
 
-    $$("[data-build-id]", list).forEach((card) => {
-      const id = card.dataset.buildId;
+  $$("[data-build-id]", list).forEach((card) => {
+    const id = card.dataset.buildId;
 
-      $$("button[data-action]", card).forEach((btn) => {
-        styleActionButton(btn);
+    $$("button[data-action]", card).forEach((btn) => {
+      styleActionButton(btn);
 
-        btn.addEventListener("click", () => {
-          const action = btn.dataset.action;
-          const items = getLibrary();
-          const item = items.find((x) => x.id === id);
-          if (!item) return;
+      btn.addEventListener("click", () => {
+        const action = btn.dataset.action;
+        const items = getLibrary();
+        const item = items.find((x) => x.id === id);
+        if (!item) return;
 
-          if (action === "open") {
-  closeLibrary();
-  return openPreviewModal(item.html || "", item.title || "Untitled Build");
-}
-          if (action === "pin") return updateLibraryItem(id, { pinned: !item.pinned });
-          if (action === "archive") return updateLibraryItem(id, { archived: !item.archived });
-
-          if (action === "notes") {
-            const notes = window.prompt("Edit notes:", item.notes || "");
-            if (notes == null) return;
-            return updateLibraryItem(id, { notes });
+        if (action === "open") {
+          const modal = $("builderLibraryModal");
+          if (modal) {
+            modal.hidden = true;
+            modal.style.display = "none";
+            delete modal.dataset.modalVisible;
           }
 
-          if (action === "tags") {
-            const tags = promptTags(item.tags || []);
-            if (tags == null) return;
-            return updateLibraryItem(id, { tags });
-          }
+          document.body.classList.remove("modal-open");
 
-          if (action === "rename") {
-            const title = window.prompt("Rename build:", item.title || "Untitled Build");
-            if (title == null) return;
-            return updateLibraryItem(id, { title: title.trim() || "Untitled Build" });
-          }
+          setTimeout(() => {
+            openPreviewModal(item.html || "", item.title || "Untitled Build");
+          }, 180);
 
-          if (action === "duplicate") return duplicateLibraryItem(id);
+          return;
+        }
 
-          if (action === "delete") {
-            if (window.confirm(`Delete "${item.title}"?`)) removeLibraryItem(id);
-          }
-        });
+        if (action === "pin") return updateLibraryItem(id, { pinned: !item.pinned });
+        if (action === "archive") return updateLibraryItem(id, { archived: !item.archived });
+
+        if (action === "notes") {
+          const notes = window.prompt("Edit notes:", item.notes || "");
+          if (notes == null) return;
+          return updateLibraryItem(id, { notes });
+        }
+
+        if (action === "tags") {
+          const tags = promptTags(item.tags || []);
+          if (tags == null) return;
+          return updateLibraryItem(id, { tags });
+        }
+
+        if (action === "rename") {
+          const title = window.prompt("Rename build:", item.title || "Untitled Build");
+          if (title == null) return;
+          return updateLibraryItem(id, { title: title.trim() || "Untitled Build" });
+        }
+
+        if (action === "duplicate") return duplicateLibraryItem(id);
+
+        if (action === "delete") {
+          if (window.confirm(`Delete "${item.title}"?`)) removeLibraryItem(id);
+        }
       });
     });
-  }
+  });
+}
 
   function ensureLibraryDom() {
     if ($("builderLibraryModal") && $("builderLibraryList")) return;
