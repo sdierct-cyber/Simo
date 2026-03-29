@@ -2379,9 +2379,12 @@
           const action = btn.getAttribute("data-recent-action");
 
           if (action === "open") {
-            openPreviewModal(item.html || "", item.title || "Untitled Preview");
-            return;
-          }
+  closeLibrary();
+  setTimeout(() => {
+    openPreviewModal(item.html || "", item.title || "Untitled Build");
+  }, 120);
+  return;
+}
 
           if (action === "copy-title") {
             await copyTextToClipboard(item.title || "Untitled Preview", "Preview title copied.");
