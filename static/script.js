@@ -2379,13 +2379,22 @@
           const action = btn.getAttribute("data-recent-action");
 
           if (action === "open") {
-  closeLibrary();
+  const modal = $("builderLibraryModal");
+  if (modal) {
+    modal.hidden = true;
+    modal.style.display = "none";
+    delete modal.dataset.modalVisible;
+  }
+
+  document.body.classList.remove("modal-open");
+
   setTimeout(() => {
     openPreviewModal(item.html || "", item.title || "Untitled Build");
-  }, 120);
+  }, 180);
+
   return;
 }
-
+          
           if (action === "copy-title") {
             await copyTextToClipboard(item.title || "Untitled Preview", "Preview title copied.");
             return;
