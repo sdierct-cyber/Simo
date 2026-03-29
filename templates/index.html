@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simo — Your Best Friend</title>
+  <link rel="stylesheet" href="/static/styles.css?v=phase50" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-card">
+        <div style="font-size:34px; margin-bottom:10px;">🤖</div>
+        <div style="font-size:18px; font-weight:700;">Simo</div>
+        <div class="muted" style="margin-top:6px;">Your Best Friend</div>
+        <div class="muted tiny" style="margin-top:10px;">Warm, smart, and ready</div>
+      </div>
+
+      <div class="side-card">
+        <div style="font-weight:700; margin-bottom:8px;">Image Upload & Analysis</div>
+        <div class="muted">Upload any photo — Simo describes & helps</div>
+      </div>
+
+      <div class="side-card">
+        <div style="font-weight:700; margin-bottom:8px;">Business Plans & Startups</div>
+        <div class="muted">Full plans generated instantly</div>
+      </div>
+
+      <div class="side-card">
+        <div style="font-weight:700; margin-bottom:8px;">Stock Market & Portfolios</div>
+        <div class="muted">General insights + tracking ideas</div>
+      </div>
+
+      <div class="side-card">
+        <div style="font-weight:700; margin-bottom:8px;">AI Website Builder</div>
+        <div class="muted">Generate premium landing pages instantly</div>
+      </div>
+
+      <div class="side-card">
+        <div style="font-weight:700; margin-bottom:8px;">3D Rendering & Rotate</div>
+        <div class="muted">Viewer stays honest — only verified 3D opens</div>
+      </div>
+
+      <div class="side-card" id="builderLibraryCard">
+        <div style="font-weight:700; margin-bottom:8px;">Builder Library</div>
+        <div class="muted">Open saved websites and reload past builds</div>
+      </div>
+
+      <div style="margin-top:16px; display:grid; gap:12px;">
+        <button id="settingsBtn" class="pill" type="button">Settings & Voice</button>
+        <button id="signupBtn" class="pill" type="button">Easy Signup</button>
+        <button id="openLibraryBtn" class="pill" type="button">Open Library</button>
+        <button id="reopenLastPreviewBtn" class="pill hidden" type="button">Reopen Last Preview</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero-card topbar">
+        <div>
+          <div style="font-size:18px; font-weight:700;">Chat with Simo</div>
+          <div class="muted" style="margin-top:6px;">YOUR ALL-IN-ONE BEST-FRIEND AI</div>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="online-pill">
+            <span class="dot"></span>
+            <span>Simo is online</span>
+          </div>
+
+          <button id="upgradeBtn" class="pill" type="button">Upgrade</button>
+          <button id="newChatBtn" class="pill" type="button">+ New Chat</button>
+          <button id="loginBtn" class="pill" type="button">Sign in</button>
+          <button id="logoutBtn" class="pill" type="button">Logout</button>
+          <button id="profileBtn" class="pill" type="button">🙂 You</button>
+          <button id="clearHistoryBtn" class="pill" type="button">🗑 Clear History</button>
+        </div>
+      </section>
+
+      <section class="hero-card">
+        <div class="chip-row">
+          <div class="chip">⚡ Ready for chat</div>
+          <div class="chip">🧠 Builder enabled</div>
+          <div class="chip">🖼️ Image aware</div>
+          <div class="chip">🧊 3D viewer ready</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card">
+            <div class="tiny muted">ACCOUNT</div>
+            <div id="accountValue" style="font-size:18px; font-weight:700; margin-top:6px;">Guest</div>
+            <div id="userEmail" class="muted tiny" style="margin-top:6px;"></div>
+            <div class="muted" style="margin-top:6px;">Logged-in workspace status</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="tiny muted">PLAN</div>
+            <div id="planValue" style="font-size:18px; font-weight:700; margin-top:6px;">Free</div>
+            <div id="proBadge" class="muted tiny" data-pro="false" style="margin-top:6px;">Free</div>
+            <div class="muted" style="margin-top:6px;">Free / Pro / Team</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="tiny muted">USAGE TODAY</div>
+            <div id="usageTodayValue" style="font-size:18px; font-weight:700; margin-top:6px;">0</div>
+            <div class="muted" style="margin-top:6px;">Daily message usage</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="tiny muted">BUILDER LIBRARY</div>
+            <div id="libraryCountValue" style="font-size:18px; font-weight:700; margin-top:6px;">0</div>
+            <div class="muted" style="margin-top:6px;">Saved local builds</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chat-wrap" id="chat">
+        <div id="chatMessages"></div>
+      </section>
+
+      <section class="composer-wrap">
+        <button id="imageBtn" class="icon-btn" type="button" aria-label="Upload image">🖼</button>
+        <input id="imageInput" type="file" accept="image/*" hidden />
+        <textarea id="chatInput" placeholder="Talk to your best friend Simo..."></textarea>
+        <button id="sendBtn" class="send-btn" type="button" aria-label="Send">➤</button>
+      </section>
+
+      <div id="loadingHint">Ready.</div>
+    </main>
+  </div>
+
+  <script>
+    window.SIMO_BOOT = {{ simo_boot_json | safe }};
+  </script>
+
+ <script src="/static/3dviewer.js?v=phase50"></script>
+<script src="/static/script.js?v=phase50"></script>
+<script src="/static/phase28-safe-addon.js?v=phase28safe1"></script>
+</body>
+</html>
