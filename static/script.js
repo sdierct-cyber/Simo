@@ -2706,7 +2706,10 @@
           const item = items.find((x) => x.id === id);
           if (!item) return;
 
-          if (action === "open") return openPreviewModal(item.html || "", item.title || "Untitled Build");
+          if (action === "open") {
+  closeLibrary();
+  return openPreviewModal(item.html || "", item.title || "Untitled Build");
+}
           if (action === "pin") return updateLibraryItem(id, { pinned: !item.pinned });
           if (action === "archive") return updateLibraryItem(id, { archived: !item.archived });
 
