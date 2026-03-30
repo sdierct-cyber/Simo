@@ -3500,3 +3500,87 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", "5000"))
     debug = env_bool("FLASK_DEBUG", True)
     app.run(host=host, port=port, debug=debug)
+
+# =========================================================
+# Persistent Library (Phase 3.0A)
+# =========================================================
+
+def ensure_saved_builds_table():
+    conn = get_db()
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS saved_builds (
+            id TEXT PRIMARY KEY,
+            user_email TEXT,
+            title TEXT,
+            html TEXT,
+            created_at TEXT,
+            updated_at TEXT
+        )
+    """)
+    conn.commit()
+
+
+ensure_saved_builds_table()
+
+
+@app.route("/api/library", methods=["GET"])
+def api_get_library():
+    email = session.get("user_email")
+    if not email:
+        return jsonify({"ok": True, "items": []})
+
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT * FROM saved_builds WHERE user_email=? ORDER BY updated_at DESC",
+        (email,)
+    ).fetchall()
+
+    items = [dict(r) for r in rows]
+    return jsonify({"ok": True, "items": items})
+
+
+@app.route("/api/library/save", methods=["POST"])
+def api_save_build():
+    email = session.get("user_email")
+    if not email:
+        return jsonify({"ok": False, "error": "not_logged_in"}), 401
+
+    data = request.get_json() or {}
+
+    build_id = data.get("id") or secrets.token_hex(8)
+    title = data.get("title") or "Untitled Build"
+    html = data.get("html") or ""
+
+    now = dt.datetime.utcnow().isoformat()
+
+    conn = get_db()
+    conn.execute("""
+        INSERT INTO saved_builds (id, user_email, title, html, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            title=excluded.title,
+            html=excluded.html,
+            updated_at=excluded.updated_at
+    """, (build_id, email, title, html, now, now))
+    conn.commit()
+
+    return jsonify({"ok": True, "id": build_id})
+
+
+@app.route("/api/library/delete", methods=["POST"])
+def api_delete_build():
+    email = session.get("user_email")
+    if not email:
+        return jsonify({"ok": False}), 401
+
+    data = request.get_json() or {}
+    build_id = data.get("id")
+
+    conn = get_db()
+    conn.execute(
+        "DELETE FROM saved_builds WHERE id=? AND user_email=?",
+        (build_id, email)
+    )
+    conn.commit()
+
+    return jsonify({"ok": True})
