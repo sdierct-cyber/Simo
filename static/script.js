@@ -337,9 +337,17 @@
     setTimeout(() => scrollChatToBottom(true), 320);
   }
 
-  // -----------------------------
+    // -----------------------------
   // storage
   // -----------------------------
+  const librarySyncState = {
+    hydrating: false,
+    saving: false,
+    queued: false,
+    hydratedOnce: false,
+    lastServerHash: "",
+  };
+
   function normalizeLibraryArray(items) {
     if (!Array.isArray(items)) return [];
 
@@ -359,13 +367,150 @@
       }));
   }
 
+  function libraryHash(items) {
+    try {
+      return JSON.stringify(normalizeLibraryArray(items));
+    } catch {
+      return "";
+    }
+  }
+
+  async function apiGetLibraryItems() {
+    try {
+      const data = await api("/api/library");
+      return normalizeLibraryArray(data && Array.isArray(data.items) ? data.items : []);
+    } catch (err) {
+      console.warn("apiGetLibraryItems failed:", err);
+      return null;
+    }
+  }
+
+  async function apiSaveLibraryItems(items) {
+    try {
+      const clean = normalizeLibraryArray(items);
+      await api("/api/library", {
+        method: "POST",
+        body: JSON.stringify({ items: clean }),
+      });
+      librarySyncState.lastServerHash = libraryHash(clean);
+      return true;
+    } catch (err) {
+      console.warn("apiSaveLibraryItems failed:", err);
+      return false;
+    }
+  }
+
   function getLibrary() {
     return normalizeLibraryArray(safeJsonParse(localStorage.getItem(LIB_KEY), []));
   }
 
-  function setLibrary(items) {
-    localStorage.setItem(LIB_KEY, JSON.stringify(normalizeLibraryArray(items)));
+  function setLibrary(items, options = {}) {
+    const clean = normalizeLibraryArray(items);
+    localStorage.setItem(LIB_KEY, JSON.stringify(clean));
     updateDashboardUi();
+
+    if (!options.skipSync) {
+      scheduleLibrarySync();
+    }
+  }
+
+  function replaceLibraryFromServer(items) {
+    const clean = normalizeLibraryArray(items);
+    localStorage.setItem(LIB_KEY, JSON.stringify(clean));
+    librarySyncState.lastServerHash = libraryHash(clean);
+    updateDashboardUi();
+  }
+
+  async function flushLibrarySync() {
+    if (librarySyncState.hydrating || librarySyncState.saving) {
+      librarySyncState.queued = true;
+      return;
+    }
+
+    librarySyncState.saving = true;
+
+    try {
+      const localItems = getLibrary();
+      const localHash = libraryHash(localItems);
+
+      if (localHash && localHash === librarySyncState.lastServerHash) {
+        return;
+      }
+
+      await apiSaveLibraryItems(localItems);
+    } finally {
+      librarySyncState.saving = false;
+
+      if (librarySyncState.queued) {
+        librarySyncState.queued = false;
+        setTimeout(() => {
+          flushLibrarySync();
+        }, 60);
+      }
+    }
+  }
+
+  function scheduleLibrarySync() {
+    if (librarySyncState.hydrating) return;
+    if (librarySyncState.saving) {
+      librarySyncState.queued = true;
+      return;
+    }
+
+    clearTimeout(scheduleLibrarySync._timer);
+    scheduleLibrarySync._timer = setTimeout(() => {
+      flushLibrarySync();
+    }, 180);
+  }
+
+  async function hydrateLibraryFromBackend() {
+    if (librarySyncState.hydrating || librarySyncState.hydratedOnce) return;
+
+    librarySyncState.hydrating = true;
+
+    try {
+      const serverItems = await apiGetLibraryItems();
+      const localItems = getLibrary();
+
+      const serverHasItems = Array.isArray(serverItems) && serverItems.length > 0;
+      const localHasItems = Array.isArray(localItems) && localItems.length > 0;
+
+      if (serverHasItems && !localHasItems) {
+        replaceLibraryFromServer(serverItems);
+      } else if (serverHasItems && localHasItems) {
+        const localById = new Map(localItems.map((item) => [item.id, item]));
+        const merged = [...localItems];
+
+        for (const serverItem of serverItems) {
+          if (!localById.has(serverItem.id)) {
+            merged.push(serverItem);
+            continue;
+          }
+
+          const localItem = localById.get(serverItem.id);
+          const localUpdated = new Date(localItem.updatedAt || localItem.createdAt || 0).getTime();
+          const serverUpdated = new Date(serverItem.updatedAt || serverItem.createdAt || 0).getTime();
+
+          if (serverUpdated > localUpdated) {
+            const idx = merged.findIndex((x) => x.id === serverItem.id);
+            if (idx >= 0) merged[idx] = serverItem;
+          }
+        }
+
+        replaceLibraryFromServer(merged);
+      } else if (!serverHasItems && localHasItems) {
+        librarySyncState.lastServerHash = "";
+        scheduleLibrarySync();
+      } else {
+        librarySyncState.lastServerHash = libraryHash(localItems);
+      }
+
+      librarySyncState.hydratedOnce = true;
+    } catch (err) {
+      console.warn("hydrateLibraryFromBackend failed:", err);
+    } finally {
+      librarySyncState.hydrating = false;
+    }
   }
 
   function getLastPreview() {
@@ -494,6 +639,10 @@
     setLibrary(merged);
     return merged.length;
   }
+
+  setTimeout(() => {
+    hydrateLibraryFromBackend();
+  }, 0);
 
   // -----------------------------
   // dom refs
