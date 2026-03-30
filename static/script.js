@@ -2852,8 +2852,17 @@
   }
 
   function closeLibrary() {
-    modalClose($("builderLibraryModal"));
-  }
+  const modal = $("builderLibraryModal");
+  if (!modal) return;
+
+  modal.hidden = true;
+  modal.style.display = "none";
+  delete modal.dataset.modalVisible;
+
+  // 🔥 fix stuck overlay / blur
+  document.body.classList.remove("modal-open");
+  document.body.style.overflow = "";
+}
 
   function exportLibraryFile() {
     try {
