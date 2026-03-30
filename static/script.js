@@ -2381,7 +2381,7 @@
           if (action === "open") {
   closeLibrary();
   setTimeout(() => {
-    openPreviewModal(item.html || "", item.title || "Untitled Build");
+    openBuilderPreview(item.html || "", item.title || "Untitled Build");
   }, 120);
   return;
 }
