@@ -2215,31 +2215,37 @@
   }
 
   function openPreviewModal(html, title = "Simo Builder Preview") {
-    ensurePreviewModalDom();
+  ensurePreviewModalDom();
 
-    const modal = $("builderPreviewModal");
-    const frame = $("builderPreviewFrame");
-    const htmlEl = $("builderPreviewHtml");
-    const titleEl = $("builderPreviewTitle");
-    const showBtn = $("showHtmlBtn");
+  const libraryModal = $("builderLibraryModal");
+  const previewModal = $("builderPreviewModal");
+  const frame = $("builderPreviewFrame");
+  const htmlEl = $("builderPreviewHtml");
+  const titleEl = $("builderPreviewTitle");
+  const showBtn = $("showHtmlBtn");
 
-    state.lastPreviewHtml = String(html || "");
-    state.lastPreviewTitle = String(title || "Simo Builder Preview");
-    state.currentPreviewMode = "render";
-
-    if (titleEl) titleEl.textContent = state.lastPreviewTitle;
-    if (frame) frame.srcdoc = state.lastPreviewHtml;
-    if (htmlEl) {
-      htmlEl.textContent = state.lastPreviewHtml;
-      hide(htmlEl);
-    }
-    if (frame) show(frame);
-    if (showBtn) showBtn.textContent = "Show HTML";
-
-    saveLastPreview(state.lastPreviewHtml, state.lastPreviewTitle);
-    modalOpen(modal);
-    scrollAfterUiChange();
+  // Force-close library first so preview cannot open behind it
+  if (libraryModal && libraryModal.dataset.modalVisible === "true") {
+    modalClose(libraryModal);
   }
+
+  state.lastPreviewHtml = String(html || "");
+  state.lastPreviewTitle = String(title || "Simo Builder Preview");
+  state.currentPreviewMode = "render";
+
+  if (titleEl) titleEl.textContent = state.lastPreviewTitle;
+  if (frame) frame.srcdoc = state.lastPreviewHtml;
+  if (htmlEl) {
+    htmlEl.textContent = state.lastPreviewHtml;
+    hide(htmlEl);
+  }
+  if (frame) show(frame);
+  if (showBtn) showBtn.textContent = "Show HTML";
+
+  saveLastPreview(state.lastPreviewHtml, state.lastPreviewTitle);
+  modalOpen(previewModal);
+  scrollAfterUiChange();
+}
 
   function closePreviewModal() {
     modalClose($("builderPreviewModal"));
