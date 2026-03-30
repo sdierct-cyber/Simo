@@ -7148,4 +7148,90 @@ function showPublishSuccess(url) {
   }
 
   loop();
+
+// ==============================
+// Simo Phase 2.7 — Smart Starter Prompts (FIXED LISTENER)
+// ==============================
+
+(function simoSmartStarters() {
+  function init() {
+    const input = document.getElementById("chatInput");
+    if (!input) return;
+
+    const starters = {
+      build: "Build a modern landing page for my business",
+      business: "Give me a startup idea I can launch quickly",
+      design: "Design something creative and unique for me",
+      image: "Analyze this image and tell me what you see",
+      chat: "Let’s just chat"
+    };
+
+    function applyPrompt(text) {
+      input.value = text;
+      input.focus();
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+
+    document.addEventListener("click", function (e) {
+      const el = e.target.closest("[data-simo-starter]");
+      if (!el) return;
+
+      const key = el.getAttribute("data-simo-starter");
+      if (!starters[key]) return;
+
+      applyPrompt(starters[key]);
+    });
+
+    console.log("✅ Simo Starter Prompts Ready");
+  }
+
+  // ensure DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+// ==============================
+// Simo Phase 2.8 — Starter UX Enhancements (SAFE ADD-ON)
+// ==============================
+
+(function simoStarterUXEnhancements() {
+  function init() {
+    const buttons = Array.from(document.querySelectorAll("[data-simo-starter]"));
+    const input = document.getElementById("chatInput");
+    if (!buttons.length || !input) return;
+
+    function setActive(clicked) {
+      buttons.forEach(btn => {
+        btn.style.opacity = "0.6";
+        btn.style.transform = "scale(0.98)";
+      });
+
+      clicked.style.opacity = "1";
+      clicked.style.transform = "scale(1.05)";
+    }
+
+    function scrollToInput() {
+      input.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        setActive(btn);
+        scrollToInput();
+      });
+    });
+
+    console.log("✨ Starter UX Enhancements Active");
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
 })();
