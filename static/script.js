@@ -2745,7 +2745,8 @@
         if (action === "duplicate") return duplicateLibraryItem(id);
 
         if (action === "delete") {
-          if (window.confirm(\`Delete "\${item.title}"?\`)) removeLibraryItem(id);
+        if (window.confirm(`Delete "${item.title}"?`)) removeLibraryItem(id);
+
         }
       });
     });
