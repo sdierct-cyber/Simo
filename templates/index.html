@@ -57,8 +57,8 @@
     <main class="main">
       <section class="hero-card topbar">
         <div>
-          <div style="font-size:18px; font-weight:700;">Chat with Simo</div>
-          <div class="muted" style="margin-top:6px;">YOUR ALL-IN-ONE BEST-FRIEND AI</div>
+          <div style="font-size:18px; font-weight:700;">What do you want to build today?</div>
+          <div class="muted" style="margin-top:6px;">Talk, design, create, and build — all in one place</div>
         </div>
 
         <div class="topbar-actions">
@@ -113,6 +113,38 @@
         </div>
       </section>
 
+      <section class="hero-card" style="padding:18px 20px; margin-top:14px;">
+        <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Start with one of these:</div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="chip" type="button" data-simo-starter="build" style="cursor:pointer;">Build a website</button>
+          <button class="chip" type="button" data-simo-starter="business" style="cursor:pointer;">Create a business idea</button>
+          <button class="chip" type="button" data-simo-starter="design" style="cursor:pointer;">Design something</button>
+          <button class="chip" type="button" data-simo-starter="image" style="cursor:pointer;">Analyze an image</button>
+          <button class="chip" type="button" data-simo-starter="chat" style="cursor:pointer;">Just chat</button>
+        </div>
+
+        <div class="muted tiny" style="margin-top:12px;">
+          Click one to load a starter prompt into the composer. Nothing auto-sends.
+        </div>
+
+        <div
+          style="
+            margin-top:14px;
+            padding:12px 14px;
+            border-radius:12px;
+            background:rgba(255,255,255,.04);
+            border:1px solid rgba(255,255,255,.08);
+          "
+        >
+          <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Best first move</div>
+          <div class="muted tiny" style="line-height:1.5;">
+            New here? Start with <strong>Build a website</strong> or <strong>Create a business idea</strong>.
+            You can send the starter as-is or edit it first before pressing send.
+          </div>
+        </div>
+      </section>
+
       <section class="chat-wrap" id="chat">
         <div id="chatMessages"></div>
       </section>
@@ -120,7 +152,7 @@
       <section class="composer-wrap">
         <button id="imageBtn" class="icon-btn" type="button" aria-label="Upload image">🖼</button>
         <input id="imageInput" type="file" accept="image/*" hidden />
-        <textarea id="chatInput" placeholder="Talk to your best friend Simo..."></textarea>
+        <textarea id="chatInput" placeholder="What do you want to build today?"></textarea>
         <button id="sendBtn" class="send-btn" type="button" aria-label="Send">➤</button>
       </section>
 
@@ -132,8 +164,8 @@
     window.SIMO_BOOT = {{ simo_boot_json | safe }};
   </script>
 
-<script src="/static/3dviewer.js?v=phase50"></script>
-<script src="/static/script.js?v=phase50"></script>
-<!-- <script src="/static/phase28-safe-addon.js?v=phase28safe1"></script> -->
+  <script src="/static/3dviewer.js?v=phase50"></script>
+  <script src="/static/script.js?v=phase50"></script>
+  <script src="/static/phase28-safe-addon.js?v=phase28safe1"></script>
 </body>
 </html>
