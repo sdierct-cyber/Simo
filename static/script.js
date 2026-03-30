@@ -2710,18 +2710,13 @@
         if (!item) return;
 
         if (action === "open") {
-          const modal = $("builderLibraryModal");
-          if (modal) {
-            modal.hidden = true;
-            modal.style.display = "none";
-            delete modal.dataset.modalVisible;
-          }
+          closeLibrary();
 
-          document.body.classList.remove("modal-open");
-
-          setTimeout(() => {
-            openPreviewModal(item.html || "", item.title || "Untitled Build");
-          }, 180);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              openPreviewModal(item.html || "", item.title || "Untitled Build");
+            });
+          });
 
           return;
         }
@@ -2750,7 +2745,7 @@
         if (action === "duplicate") return duplicateLibraryItem(id);
 
         if (action === "delete") {
-          if (window.confirm(`Delete "${item.title}"?`)) removeLibraryItem(id);
+          if (window.confirm(\`Delete "\${item.title}"?\`)) removeLibraryItem(id);
         }
       });
     });
@@ -2859,7 +2854,6 @@
   modal.style.display = "none";
   delete modal.dataset.modalVisible;
 
-  // 🔥 fix stuck overlay / blur
   document.body.classList.remove("modal-open");
   document.body.style.overflow = "";
 }
