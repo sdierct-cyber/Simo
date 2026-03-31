@@ -2932,7 +2932,7 @@ def debug_routes():
 def login():
     if "google" in oauth._clients:
         return redirect(url_for("login_google"))
-    return redirect(url_for("home"))
+    return redirect(url_for("app_home"))
 
 
 @app.route("/login/google")
@@ -2966,7 +2966,7 @@ def auth_google_callback():
         session["user_name"] = name
         session["google_sub"] = sub
 
-        return redirect(url_for("home"))
+        return redirect(url_for("app_home"))
     except Exception as e:
         return jsonify({"ok": False, "error": f"Google auth failed: {str(e)}"}), 500
 
@@ -2976,7 +2976,7 @@ def logout():
     session.pop("user_email", None)
     session.pop("user_name", None)
     session.pop("google_sub", None)
-    return redirect(url_for("home"))
+    return redirect(url_for("app_home"))
 
 
 @app.route("/api/me")
@@ -3024,11 +3024,11 @@ def api_create_checkout_session():
         email = current_user_email() or str(data.get("email") or "").strip().lower() or None
 
         if BASE_URL:
-            success_url = f"{BASE_URL}/?checkout=success"
-            cancel_url = f"{BASE_URL}/?checkout=cancel"
+            success_url = f"{BASE_URL}/app?checkout=success"
+            cancel_url = f"{BASE_URL}/app?checkout=cancel"
         else:
-            success_url = url_for("home", _external=True) + "?checkout=success"
-            cancel_url = url_for("home", _external=True) + "?checkout=cancel"
+            success_url = url_for("app_home", _external=True) + "?checkout=success"
+            cancel_url = url_for("app_home", _external=True) + "?checkout=cancel"
 
         checkout = stripe.checkout.Session.create(
             mode="subscription",
@@ -3502,15 +3502,6 @@ def server_error(_e):
 
 
 # =========================================================
-# Main
-# =========================================================
-if __name__ == "__main__":
-    host = os.getenv("HOST", "127.0.0.1")
-    port = int(os.getenv("PORT", "5000"))
-    debug = env_bool("FLASK_DEBUG", True)
-    app.run(host=host, port=port, debug=debug)
-
-# =========================================================
 # Persistent Library (Phase 3.0A)
 # =========================================================
 
@@ -3593,3 +3584,13 @@ def api_delete_build():
     conn.commit()
 
     return jsonify({"ok": True})
+
+
+# =========================================================
+# Main
+# =========================================================
+if __name__ == "__main__":
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "5000"))
+    debug = env_bool("FLASK_DEBUG", True)
+    app.run(host=host, port=port, debug=debug)
