@@ -1905,7 +1905,6 @@
           published = normalizePublishResponse(data, slug);
 
            if (published && published.url) {
-  showPublishSuccess(published.url);
   closeLibrary();
   document.body.classList.remove("modal-open");
   document.body.style.overflow = "";
