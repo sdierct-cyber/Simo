@@ -1904,10 +1904,13 @@
           const data = await tryPublishRequest(endpoint, payload);
           published = normalizePublishResponse(data, slug);
 
-          if (published && published.url) {
-            showPublishSuccess(published.url);
-            break;
-          }
+           if (published && published.url) {
+  showPublishSuccess(published.url);
+  closeLibrary();
+  document.body.classList.remove("modal-open");
+  document.body.style.overflow = "";
+  break;
+}
 
           lastErr = new Error(`Endpoint responded without a publish URL: ${endpoint}`);
         } catch (err) {
