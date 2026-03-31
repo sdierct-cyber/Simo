@@ -113,34 +113,108 @@
         </div>
       </section>
 
-      <section class="hero-card" style="padding:18px 20px; margin-top:14px;">
-        <div style="font-size:14px; font-weight:700; margin-bottom:12px;">Start with one of these:</div>
-
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <button class="chip" type="button" data-simo-starter="build" style="cursor:pointer;">Build a website</button>
-          <button class="chip" type="button" data-simo-starter="business" style="cursor:pointer;">Create a business idea</button>
-          <button class="chip" type="button" data-simo-starter="design" style="cursor:pointer;">Design something</button>
-          <button class="chip" type="button" data-simo-starter="image" style="cursor:pointer;">Analyze an image</button>
-          <button class="chip" type="button" data-simo-starter="chat" style="cursor:pointer;">Just chat</button>
-        </div>
-
-        <div class="muted tiny" style="margin-top:12px;">
-          Click one to load a starter prompt into the composer. Nothing auto-sends.
-        </div>
-
+      <section
+        class="hero-card"
+        style="
+          padding:20px 22px;
+          margin-top:14px;
+          position:relative;
+          overflow:hidden;
+          background:
+            radial-gradient(circle at top right, rgba(110,168,255,.10), transparent 24%),
+            linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.025));
+          border:1px solid rgba(255,255,255,.08);
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.04),
+            0 10px 30px rgba(0,0,0,.12);
+        "
+      >
         <div
           style="
-            margin-top:14px;
-            padding:12px 14px;
-            border-radius:12px;
-            background:rgba(255,255,255,.04);
-            border:1px solid rgba(255,255,255,.08);
+            position:absolute;
+            top:-60px;
+            right:-40px;
+            width:180px;
+            height:180px;
+            border-radius:999px;
+            background:radial-gradient(circle, rgba(110,168,255,.10), transparent 68%);
+            pointer-events:none;
           "
-        >
-          <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Best first move</div>
-          <div class="muted tiny" style="line-height:1.5;">
-            New here? Start with <strong>Build a website</strong> or <strong>Create a business idea</strong>.
-            You can send the starter as-is or edit it first before pressing send.
+        ></div>
+
+        <div style="position:relative; z-index:1;">
+          <div style="font-size:14px; font-weight:700; margin-bottom:12px; letter-spacing:.01em;">
+            Start with one of these:
+          </div>
+
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="chip" type="button" data-simo-starter="build" style="cursor:pointer;">Build a website</button>
+            <button class="chip" type="button" data-simo-starter="business" style="cursor:pointer;">Create a business idea</button>
+            <button class="chip" type="button" data-simo-starter="design" style="cursor:pointer;">Design something</button>
+            <button class="chip" type="button" data-simo-starter="image" style="cursor:pointer;">Analyze an image</button>
+            <button class="chip" type="button" data-simo-starter="chat" style="cursor:pointer;">Just chat</button>
+          </div>
+
+          <div class="muted tiny" style="margin-top:12px;">
+            Click one to load a starter prompt into the composer. Nothing auto-sends.
+          </div>
+
+          <div
+            id="simoHintCard"
+            style="
+              margin-top:14px;
+              padding:14px 16px;
+              border-radius:14px;
+              background:
+                linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+              border:1px solid rgba(255,255,255,.10);
+              box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.05),
+                0 10px 28px rgba(0,0,0,.10);
+              position:relative;
+              overflow:hidden;
+            "
+          >
+            <div
+              style="
+                position:absolute;
+                inset:0;
+                background:
+                  radial-gradient(circle at top left, rgba(110,168,255,.10), transparent 30%);
+                pointer-events:none;
+              "
+            ></div>
+
+            <div style="position:relative; z-index:1;">
+              <div
+                style="
+                  font-size:13px;
+                  font-weight:700;
+                  margin-bottom:7px;
+                  display:flex;
+                  align-items:center;
+                  gap:8px;
+                "
+              >
+                <span
+                  style="
+                    width:8px;
+                    height:8px;
+                    border-radius:999px;
+                    background:#6ea8ff;
+                    box-shadow:0 0 12px rgba(110,168,255,.6);
+                    display:inline-block;
+                    flex:0 0 auto;
+                  "
+                ></span>
+                <span>Best first move</span>
+              </div>
+
+              <div id="simoHintText" class="muted tiny" style="line-height:1.6;">
+                New here? Start with <strong>Build a website</strong> or <strong>Create a business idea</strong>.
+                You can send the starter as-is or edit it first before pressing send.
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -167,5 +241,6 @@
   <script src="/static/3dviewer.js?v=phase50"></script>
   <script src="/static/script.js?v=phase50"></script>
   <script src="/static/phase28-safe-addon.js?v=phase28safe1"></script>
+  <script src="/static/phase29b-safe-addon.js?v=phase29b1"></script>
 </body>
 </html>
