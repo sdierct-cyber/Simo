@@ -2847,11 +2847,11 @@ User request:
 # =========================================================
 # Routes
 # =========================================================
-@app.route("/")
-def home():
+
+def build_simo_boot():
     usage_today = get_daily_usage_count(user_key_for_limits(), get_today_key())
 
-    boot = {
+    return {
         "loggedIn": is_logged_in(),
         "email": current_user_email(),
         "name": current_user_name(),
@@ -2866,6 +2866,15 @@ def home():
         "lastPreviewKey": "simo_last_preview_v2",
     }
 
+
+@app.route("/")
+def landing():
+    return render_template("landing.html")
+
+
+@app.route("/app")
+def app_home():
+    boot = build_simo_boot()
     return render_template(
         "index.html",
         simo_boot=boot,
