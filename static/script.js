@@ -1904,7 +1904,7 @@
           const data = await tryPublishRequest(endpoint, payload);
           published = normalizePublishResponse(data, slug);
 
-           if (published && published.url) {
+          if (published && published.url) {
   closeLibrary();
   document.body.classList.remove("modal-open");
   document.body.style.overflow = "";
